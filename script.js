@@ -1,14 +1,32 @@
-const addCourseBtn = document.getElementById("open-form-btn");
-const addCourseBox = document.getElementById("add-course-container");
+//Date
+const currentDateParagraph = document.getElementById('current-date');
+
+const date = new Date();
+const day = date.getDate();
+const month = date.getMonth() + 1;
+const year = date.getFullYear();
+
+const formattedDate = `${day}/${month}/${year}`;
+currentDateParagraph.textContent = formattedDate;
+
+//courseForm
+const openFormBox = document.getElementById("open-form");
+const openFormBtn = document.getElementById("open-form-btn");
+const closeFormBtn = document.getElementById("close-form-btn");
 const courseFormBox = document.getElementById("course-form-container");
 const courseForm = document.getElementById("course-form");
-const closeFormButton = document.getElementById("close-course-form-btn");
+const addUpdateBtn = document.getElementById("add-or-update-course-btn");
+
+//Inputs
+const sessionYear = document.getElementById("session-year");
 const courseTitle = document.getElementById("course-title");
 const courseCode = document.getElementById("course-code");
 const courseUnit = document.getElementById("course-unit");
 const courseGrade = document.getElementById("course-grade");
+
+
 const dashboard = document.getElementById("course-dashboard");
-const btnContainer = document.getElementById("button-container");
+const addBtn = document.getElementById("add-course-btn");
 const courseTable = document.getElementById("course-table");
 
 const courseData = JSON.parse(localStorage.getItem("data")) || [];
@@ -66,8 +84,9 @@ const updateDashboard = () => {
             <td>${title}</td>
             <td>${unit}</td>
             <td>${grade}</td>
+            <td>${grade}</td>
             <td class="edit-delete">
-                <button class="btn">Edit course</button>
+                <button class="btn small-btn">Edit</button>
                 <button onclick="deleteTask(this)" class="close-course-form-btn" type="button" aria-label="close">
                     <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#F44336" d="M21.5 4.5H26.501V43.5H21.5z" transform="rotate(45.001 24 24)" /><path fill="#F44336" d="M21.5 4.5H26.5V43.501H21.5z" transform="rotate(135.008 24 24)" /></svg>
                 </button>
@@ -75,7 +94,7 @@ const updateDashboard = () => {
         </tr>
         `
     });
-    btnContainer.innerHTML = `
+    addBtn.innerHTML = `
     <button class="btn blue-btn" onclick="addCourse()">Add course</button>
     `
 };
@@ -87,7 +106,7 @@ const reset = () => {
     courseUnit.value = "";
     courseGrade.value = "";
     courseFormBox.close();
-    addCourseBox.classList.add("hidden");
+    openFormBox.classList.add("hidden");
     currentTask = {};
 };
 
@@ -99,15 +118,17 @@ const deleteTask = (buttonEl) => {
     localStorage.setItem('data', JSON.stringify(courseData));
     updateDashboard();
 };
+
+//input course details to form
 const addCourse = () => { 
     courseFormBox.showModal();
 }
 
-//open initial form
-addCourseBtn.addEventListener("click", addCourse)
+//input initial course detail to form
+openFormBtn.addEventListener("click", addCourse)
 
-//close form with buttin
-closeFormButton.addEventListener("click", () => {
+//close form
+closeFormBtn.addEventListener("click", () => {
     reset();
 })
 

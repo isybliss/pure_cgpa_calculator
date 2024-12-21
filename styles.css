@@ -138,7 +138,7 @@ hr{
     overflow: auto; /*The auto value is similar to scroll , 
     but it adds scrollbars only when necessary*/
 }
-.add-course-container {
+.open-form {
     width: 200px;
     height: 200px;
     background-color: var(--white);
@@ -252,4 +252,25 @@ td{
 
 tbody tr:nth-child(odd) {
     background-color: #f2f2f2;
+}
+
+td.edit-delete {
+    width: 80px;
+    border: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 3px;
+    
+}
+tbody tr:nth-child(odd) .edit-delete{
+    background-color: white;
+}
+
+.small-btn {
+    background-color: var(--dark-grey);
+    color: var(--white);
+    font-size: 11px;
+    width: unset;
+    padding: .2rem .4rem;
 }
