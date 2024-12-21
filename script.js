@@ -9,6 +9,7 @@ const courseUnit = document.getElementById("course-unit");
 const courseGrade = document.getElementById("course-grade");
 const dashboard = document.getElementById("course-dashboard");
 const btnContainer = document.getElementById("button-container");
+const courseTable = document.getElementById("course-table");
 
 const courseData = JSON.parse(localStorage.getItem("data")) || [];
 
@@ -54,22 +55,28 @@ const addOrUpdateCourseDetails = () => {
 
 //display on the dashboard
 const updateDashboard = () => {
-    dashboard.innerHTML = "";
+    dashboard.classList.remove("hidden");
+    courseTable.innerHTML = "";
     courseData.forEach(({ id, title, code, unit, grade }) => {
-        dashboard.innerHTML += `
-        <div class="task" id="${id}">
-            <p><strong>Title:</strong>${title}</p>
-            <p><strong>Date:</strong>${code}</p>
-            <p><strong>Description:</strong>${unit}</p>
-            <p><strong>Description:</strong>${grade}</p>
-            <button onclick="editTask(this)" type="button" class="btn">Edit</button>
-            <button onclick="deleteTask(this)" type="button" class="btn">Delete</button>
-        </div>
+        const dataArrIndex = courseData.findIndex(item => item.id === id) + 1;
+        courseTable.innerHTML += `
+        <tr>
+            <td>${dataArrIndex}</td>
+            <td>${code}</td>
+            <td>${title}</td>
+            <td>${unit}</td>
+            <td>${grade}</td>
+            <td class="edit-delete">
+                <button class="btn">Edit course</button>
+                <button onclick="deleteTask(this)" class="close-course-form-btn" type="button" aria-label="close">
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#F44336" d="M21.5 4.5H26.501V43.5H21.5z" transform="rotate(45.001 24 24)" /><path fill="#F44336" d="M21.5 4.5H26.5V43.501H21.5z" transform="rotate(135.008 24 24)" /></svg>
+                </button>
+            </td>
+        </tr>
         `
     });
     btnContainer.innerHTML = `
-    <button class="btn blue-btn">Add course</button>
-    <button class="btn">Edit course</button>
+    <button class="btn blue-btn" onclick="addCourse()">Add course</button>
     `
 };
 
@@ -84,10 +91,20 @@ const reset = () => {
     currentTask = {};
 };
 
-//open initial form
-addCourseBtn.addEventListener("click", () => { 
+//to delete task
+const deleteTask = (buttonEl) => {
+    const dataArrIndex = courseData.findIndex((item) => item.id === buttonEl.parentElement.id);
+    buttonEl.parentElement.parentElement.remove();
+    courseData.splice(dataArrIndex, 1);
+    localStorage.setItem('data', JSON.stringify(courseData));
+    updateDashboard();
+};
+const addCourse = () => { 
     courseFormBox.showModal();
-})
+}
+
+//open initial form
+addCourseBtn.addEventListener("click", addCourse)
 
 //close form with buttin
 closeFormButton.addEventListener("click", () => {
