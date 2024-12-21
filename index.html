@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header></header>
+    <main>
+        <section>
+            <div class="container flex-container header-container"">
+                <p class="welcome-message flex-container">Welcome back <span><strong>Emeka Beer</strong></span></p>
+                
+                <div class="session-date">
+                    <div class="session-container">
+                        <label class="session-label" for="session-year">Session</label>
+                        <div class="dropdown-container">
+                            <select name="session-year" id="session-year">
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                            </select>
+                            <div class="select-icon">
+                                <svg
+                                    class="icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="25"
+                                    height="35"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <rect x="0" fill="none" width="24" height="24" />
+
+                                    <g>
+                                        <path d="M7 10l5 5 5-5" />
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="date-container">
+                        <svg
+                            class="date-svg"
+                            xmlns="http://www.w3.org/2000/svg"
+                            version="1.0"
+                            width="512.000000pt"
+                            height="512.000000pt"
+                            viewBox="0 0 512.000000 512.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                        >
+                            <g
+                                transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+                                fill="#000"
+                                stroke="none"
+                            >
+                                <path
+                                    d="M1145 4777 c-71 -24 -120 -54 -164 -102 -59 -64 -83 -124 -89 -216 l-4 -77 -147 -3 c-142 -4 -149 -5 -213 -37 -81 -40 -149 -111 -177 -188 -21 -54 -21 -64 -21 -1789 0 -1725 0 -1735 21 -1789 28 -77 96 -148 177 -188 l67 -33 1950 0 1950 0 67 33 c74 36 133 96 170 170 l23 47 0 1760 0 1760 -23 47 c-37 74 -96 134 -169 170 -63 31 -71 32 -213 36 l-148 4 -4 77 c-8 133 -82 242 -200 297 -54 25 -75 29 -148 29 -94 -1 -151 -20 -220 -75 -75 -59 -130 -181 -130 -287 l0 -43 -954 0 -954 0 -7 74 c-12 137 -89 251 -201 303 -66 30 -179 39 -239 20z m209 -164 c23 -16 52 -49 66 -73 l25 -45 0 -365 0 -365 -28 -47 c-30 -52 -88 -92 -149 -103 -54 -10 -137 17 -175 57 -65 69 -64 60 -61 471 l3 373 27 41 c17 26 45 50 80 68 71 35 151 31 212 -12z m2594 11 c41 -20 59 -37 82 -78 l30 -51 0 -360 c0 -329 -2 -364 -19 -401 -36 -79 -137 -133 -222 -119 -57 10 -125 58 -151 107 -23 42 -23 50 -26 388 -3 377 -1 403 51 465 62 76 162 95 255 49z m537 -2717 l0 -1239 -24 -19 c-23 -19 -67 -19 -1916 -19 -1849 0 -1893 0 -1916 19 l-24 19 -3 1241 -2 1241 1942 -2 1943 -3 0 -1238z"
+                                />
+                                <path
+                                    d="M1112 2493 l3 -158 318 -3 317 -2 0 160 0 160 -320 0 -321 0 3 -157z"
+                                />
+                                <path
+                                    d="M2230 2490 l0 -160 315 0 315 0 0 160 0 160 -315 0 -315 0 0 -160z"
+                                />
+                                <path
+                                    d="M3342 2493 l3 -158 310 0 310 0 3 158 3 157 -316 0 -316 0 3 -157z"
+                                />
+                                <path
+                                    d="M1110 1855 l0 -155 320 0 320 0 0 155 0 155 -320 0 -320 0 0 -155z"
+                                />
+                                <path
+                                    d="M2230 1855 l0 -155 315 0 315 0 0 155 0 155 -315 0 -315 0 0 -155z"
+                                />
+                                <path
+                                    d="M3340 1855 l0 -155 315 0 315 0 0 155 0 155 -315 0 -315 0 0 -155z"
+                                />
+                                <path
+                                    d="M1117 1383 c-4 -3 -7 -78 -7 -165 l0 -158 320 0 320 0 0 165 0 165 -313 0 c-173 0 -317 -3 -320 -7z"
+                                />
+                                <path
+                                    d="M2230 1225 l0 -165 315 0 315 0 0 165 0 165 -315 0 -315 0 0 -165z"
+                                />
+                                <path
+                                    d="M3347 1383 c-4 -3 -7 -78 -7 -165 l0 -158 315 0 315 0 -2 163 -3 162 -306 3 c-168 1 -308 -1 -312 -5z"
+                                />
+                            </g>
+                        </svg>
+                        <p>23/05/23</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr>
+
+        <section>
+            <div class="container flex-container middle-container">
+                <div class="admission-semester">
+                    <div class="admission-container">
+                        <label class="Admission-label" for="Admission-mode">Admission mode</label>
+                        <div class="dropdown-container">
+                            <select name="Admission-mode" id="Admission-mode">
+                                <option value="">UTME</option>
+                                <option value="">UTME</option>
+                                <option value="">UTME</option>
+                                <option value="">UTME</option>
+                                <option value="">UTME</option>
+                                <option value="">UTME</option>
+                                <option value="">UTME</option>
+                            </select>
+                            <div class="select-icon">
+                                <svg
+                                    class="icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="25"
+                                    height="35"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <rect x="0" fill="none" width="24" height="24" />
+
+                                    <g>
+                                        <path d="M7 10l5 5 5-5" />
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="semester-container">
+                        <label class="semester-label" for="semester-year">semester</label>
+                        <div class="dropdown-container">
+                            <select name="semester-year" id="semester-year">
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                                <option value="">2022/2023</option>
+                            </select>
+                            <div class="select-icon">
+                                <svg
+                                    class="icon"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="25"
+                                    height="35"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <rect x="0" fill="none" width="24" height="24" />
+
+                                    <g>
+                                        <path d="M7 10l5 5 5-5" />
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container" id="button-container"></div>
+            </div>
+        </section>
+        <hr>
+        
+        <section>
+            <div class="todo-app">
+                <div id="add-course-container" class="add-course-container">
+                    <p>Add your courses to get started</p>
+                    <button id="open-form-btn" class="btn blue-btn">
+                        Add course
+                    </button>
+                </div>
+                <dialog id="course-form-container" class="dialog">
+                    <form class="course-form" id="course-form">
+                        <div class="course-form-header">
+                            <button id="close-course-form-btn" class="close-course-form-btn" type="button" aria-label="close">
+                                <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#F44336" d="M21.5 4.5H26.501V43.5H21.5z" transform="rotate(45.001 24 24)" /><path fill="#F44336" d="M21.5 4.5H26.5V43.501H21.5z" transform="rotate(135.008 24 24)" /></svg>
+                            </button>
+                        </div>
+                        <div class="course-form-body">
+                            <label for="course-title">Course title</label>
+                            <input required type="text" id="course-title" value="" />
+                            <div class="course-code-unit">
+                                <div class="code">
+                                    <label for="course-code">Course code</label>
+                                    <input type="text" id="course-code" value="" />
+                                </div>
+                                <div class="unit">
+                                    <label for="course-unit">Course unit</label>
+                                    <select name="course-unit" id="course-unit">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="course-grade">Course grade</label>
+                            <select name="course-grade" id="course-grade">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+                        <div class="course-form-footer">
+                            <button id="add-or-update-course-btn" class="btn blue-btn" type="submit">
+                                Add course
+                            </button>
+                        </div>
+                    </form>
+                </dialog>
+                <div id="course-dashboard"></div>                
+            </div>    
+        </section>
+        <section>
+            
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
