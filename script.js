@@ -29,9 +29,13 @@ const dashboard = document.getElementById("course-dashboard");
 const addBtn = document.getElementById("add-course-btn");
 const courseTable = document.getElementById("course-table");
 
-const courseData = JSON.parse(localStorage.getItem("data")) || [];
 
-const currentCourse = {};
+
+//array of each session's object
+const entireData = JSON.parse(localStorage.getItem("data")) || [];
+let currentSessionDetails = {}; //object of session clicked on and its course datas
+
+let currentCourse = {}; //object of course to be edited with its properties: id, title etc
 
 //remove special characters and leave spaces
 const removeSpecialChars = (str) => {
@@ -39,11 +43,15 @@ const removeSpecialChars = (str) => {
     return str.replace(regex, "");
 }
 
-/*
-* determine if task exist or not
-* add to taskData array if task doesnt exist
-* update if task exist
+
+/**
+ * check if session exist
+ * if it exist: 
+ * check if course exist: add new course or update/edit existing course
+ * if session doesn't exist: 
+ *  add the new sessionValue and  new course details to the newSessionDetails objects.
 */
+
 const addOrUpdateCourseDetails = () => {
     //if space is inputed instead of letters ie does not return a value after the spaces are trimmed out
     if (!courseTitle.value.trim()) {
@@ -51,35 +59,69 @@ const addOrUpdateCourseDetails = () => {
         return;
     }
 
-   const dataArrIndex = courseData.findIndex(item => item.id === currentCourse.id);
-   //returns -1 if no element exist, returns the index of the element if it exist
-   const courseDetails = {
-    id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
-    title: removeSpecialChars(courseTitle.value),
-    code: removeSpecialChars(courseCode.value),
-    unit: courseUnit.value,
-    grade: courseGrade.value, 
-   };
+    const sessionValue = sessionYear.value;
+    
+    //check if session exist
+    const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
+    
+    if (sessionIndex !== -1) {
+        currentSessionDetails = entireData[sessionIndex];
+        currentSessionDetails.session = sessionValue; //sessionArray[sessionArrayIndex];
+        const currentSessionCourseData = currentSessionDetails.sessionCourseData; //courses per session array
+        const courseDataArrIndex = currentSessionCourseData.findIndex(item => item.id === currentCourse.id);
+        const courseDetails = {
+            id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
+            title: removeSpecialChars(courseTitle.value),
+            code: removeSpecialChars(courseCode.value),
+            unit: courseUnit.value,
+            grade: courseGrade.value, 
+        };
+        //add or edit course
+        if (courseDataArrIndex === -1) {
+            //add course
+            currentSessionCourseData.unshift(courseDetails);
+        } else {
+            //update existing/edited course
+            currentSessionCourseData[courseDataArrIndex] = courseDetails;
+        }
+        currentSessionDetails.sessionCourseData = currentSessionCourseData;
+    } else{
 
-   if (dataArrIndex === -1) {
-        courseData.unshift(courseDetails);   //add course to to beginning of the task array if task doesn't exist
-   } else {
-        courseData[dataArrIndex] = courseDetails;
-   }
-   localStorage.setItem('data', JSON.stringify(courseData));
-   updateDashboard();
-   reset();
+        //if session doesn't exist
+        const newSessionDetails = {};
+        newSessionDetails.session = sessionValue;
+        const newSessionCourseData = [];
+        const courseDetails = {
+            id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
+            title: removeSpecialChars(courseTitle.value),
+            code: removeSpecialChars(courseCode.value),
+            unit: courseUnit.value,
+            grade: courseGrade.value, 
+        };
+        newSessionCourseData.push(courseDetails);
+        newSessionDetails.sessionCourseData = newSessionCourseData;
+        entireData.unshift(newSessionDetails);
+    }
+    localStorage.setItem('data', JSON.stringify(entireData));
+    console.log(entireData);
+    updateDashboard(sessionValue);
+    reset();
 };
 
 //display on the dashboard
-const updateDashboard = () => {
+const updateDashboard = (str) => {
     dashboard.classList.remove("hidden");
+    const sessionIndex = entireData.findIndex((item) => item.session === str);
+    currentSessionDetails = entireData[sessionIndex];
+    const display = currentSessionDetails.sessionCourseData;
+    let courseIndex = 0;
+        
     courseTable.innerHTML = "";
-    courseData.forEach(({ id, title, code, unit, grade }) => {
-        const dataArrIndex = courseData.findIndex(item => item.id === id) + 1;
+    display.forEach(({ id, title, code, unit, grade }) => {
+        courseIndex += 1;
         courseTable.innerHTML += `
         <tr>
-            <td>${dataArrIndex}</td>
+            <td>${courseIndex}</td>
             <td>${code}</td>
             <td>${title}</td>
             <td>${unit}</td>
@@ -92,8 +134,9 @@ const updateDashboard = () => {
                 </button>
             </td>
         </tr>
-        `
+        `;
     });
+    
     addBtn.innerHTML = `
     <button class="btn blue-btn" onclick="addCourse()">Add course</button>
     `
@@ -108,33 +151,215 @@ const reset = () => {
     courseFormBox.close();
     openFormBox.classList.add("hidden");
     currentTask = {};
+    sessionYear.value = ""
 };
-
+/*
 //to delete task
 const deleteTask = (buttonEl) => {
+    const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
     const dataArrIndex = courseData.findIndex((item) => item.id === buttonEl.parentElement.id);
     buttonEl.parentElement.parentElement.remove();
     courseData.splice(dataArrIndex, 1);
-    localStorage.setItem('data', JSON.stringify(courseData));
+    localStorage.setItem('data', JSON.stringify(entireData));
     updateDashboard();
 };
+*/
+/*
+const editTask = (buttonEl) => {
+    const dataArrIndex = taskData.findIndex(item => item.id === buttonEl.parentElement.id);
+
+    currentTask = taskData[dataArrIndex];
+
+    titleInput.value = currentTask.title;
+    dateInput.value = currentTask.date;
+    descriptionInput.value = currentTask.description;
+
+    addOrUpdateTaskBtn.innerText = "Update Task";
+    taskForm.classList.toggle("hidden");
+};
+*/
 
 //input course details to form
-const addCourse = () => { 
+const addCourse = () => {
+    openFormBox.classList.add("hidden");
+    //console.log(entireData);
     courseFormBox.showModal();
+}
+
+const submitForm = (e) => {
+    e.preventDefault();
+    //add or Edit the course details
+    addOrUpdateCourseDetails();
 }
 
 //input initial course detail to form
 openFormBtn.addEventListener("click", addCourse)
 
 //close form
-closeFormBtn.addEventListener("click", () => {
-    reset();
-})
+closeFormBtn.addEventListener("click", reset)
 
 //submit form to add to/update the dashboard
-courseForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    //add or Edit the course details
-    addOrUpdateCourseDetails();
-})
+courseForm.addEventListener("submit", submitForm)
+
+sessionYear.addEventListener('change', () => {
+    const sessionValue = sessionYear.value;
+    const dataArrIndex = entireData.findIndex((item) => item.session === sessionValue);
+    console.log(entireData);
+    console.log(dataArrIndex);
+    if (dataArrIndex === -1) {
+        dashboard.classList.add("hidden");
+        openFormBox.classList.remove("hidden");
+    } else{
+        console.log('Dashboard exist');
+        openFormBox.classList.add("hidden");
+        //updateDashboard(sessionYear.value);
+        dashboard.classList.remove("hidden");
+        addBtn.innerHTML = `
+        <button class="btn blue-btn" onclick="addCourse()">Add course</button>
+        `
+    }
+
+});
+/*
+const id = () => {
+    switch (sessionYear.value) {
+        case '2024/2025':
+            return 1;
+        case '2023/2024':
+            return 2;
+        case '2022/2023':
+            return 3;
+        case '2021/2022':
+            return 4;
+        case '2020/2021':
+            return 5;
+        case '2019/2020':
+            return 6;
+        case '2018/2019':
+            return 7;
+        case '2017/2018':
+            return 8;
+        default:
+            return 9;
+    }
+}
+
+//check if the session dashboard exist
+const checkDashboard = () => {
+    const dataArrIndex = entireData.findIndex((item) => item.session === sessionYear.value );
+    if (dataArrIndex === -1) {
+        dashboard.classList.add("hidden");
+        openFormBox.classList.remove("hidden");
+    } else{
+        openFormBox.classList.add("hidden");
+        //updateDashboard(sessionYear.value);
+        dashboard.classList.remove("hidden");
+        addBtn.innerHTML = `
+        <button class="btn blue-btn" onclick="addCourse()">Add course</button>
+        `
+    }
+}
+*/
+    
+    
+
+
+//localStorage.clear();
+
+/**
+ * click on a session;
+ * check if the session clicked on exist already with course details or not
+ * if it exist, show the course details in the dashboard
+ * if it doesn't exist, add to the dashboard
+ * 
+ * entire data = [
+ *  {
+      session: sessionyear.value,
+        courseData: [
+            {
+                id: 1,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            },
+            {
+                id: 2,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            },...
+            {
+                id: n,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            }
+        ]
+    },
+
+    {
+      session: sessionyear.value,
+        courseData: [
+            {
+                id: 1,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            },
+            {
+                id: 2,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            },...
+            {
+                id: n,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            }
+        ]
+    }...
+    {
+      session: sessionyear.value,
+        courseData: [
+            {
+                id: 1,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            },
+            {
+                id: 2,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            },...
+            {
+                id: n,
+                title: math,
+                code: mth111,
+                unit: 10,
+                grade: A,
+                remark: good
+            }
+        ]
+    }
+ ]
+ */
