@@ -18,6 +18,7 @@
                         <label class="session-label" for="session-year">Session</label>
                         <div class="dropdown-container">
                             <select name="session-year" id="session-year">
+                                <option value=""></option>
                                 <option value="2024/2025" id="1">2024/2025</option>
                                 <option value="2023/2024" id="2">2023/2024</option>
                                 <option value="2022/2023" id="3">2022/2023</option>
@@ -160,7 +161,7 @@
         <section>
             <div class="todo-app">
                 <div id="open-form" class="open-form">
-                    <p>Add your courses to get started</p>
+                    <p>Add your courses to get started for the session</p>
                     <button id="open-form-btn" class="btn blue-btn">
                         Add course
                     </button>
@@ -178,7 +179,7 @@
                             <div class="course-code-unit">
                                 <div class="code">
                                     <label for="course-code">Course code</label>
-                                    <input type="text" id="course-code" value="" />
+                                    <input type="text" id="course-code" value="" minlength="6" maxlength="6" required/>
                                 </div>
                                 <div class="unit">
                                     <label for="course-unit">Course unit</label>

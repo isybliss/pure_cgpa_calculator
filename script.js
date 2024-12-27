@@ -33,9 +33,10 @@ const courseTable = document.getElementById("course-table");
 
 //array of each session's object
 const entireData = JSON.parse(localStorage.getItem("data")) || [];
-let currentSessionDetails = {}; //object of session clicked on and its course datas
+let currentSessionDetails = {}; //object of session and its courses
 
-let currentCourse = {}; //object of course to be edited with its properties: id, title etc
+let currentSessionCourses = [];
+let currentCourse = {};
 
 //remove special characters and leave spaces
 const removeSpecialChars = (str) => {
@@ -43,6 +44,14 @@ const removeSpecialChars = (str) => {
     return str.replace(regex, "");
 }
 
+const validateInput = (str) => {
+    const regex = /^[a-zA-Z]{3}[0-9]{3}$/;
+    if (regex.test(str)) {
+        return str.toUpperCase();
+    } else {
+        return str = "";
+    }
+}
 
 /**
  * check if session exist
@@ -66,27 +75,27 @@ const addOrUpdateCourseDetails = () => {
     
     if (sessionIndex !== -1) {
         currentSessionDetails = entireData[sessionIndex];
-        currentSessionDetails.session = sessionValue; //sessionArray[sessionArrayIndex];
-        const currentSessionCourseData = currentSessionDetails.sessionCourseData; //courses per session array
-        const courseDataArrIndex = currentSessionCourseData.findIndex(item => item.id === currentCourse.id);
+        currentSessionDetails.session = sessionValue;
+        currentSessionCourses = currentSessionDetails.sessionCourseData;
+
+        //does course exist in that session?
+        const courseIndex = currentSessionCourses.findIndex(item => item.id === currentCourse.id);
         const courseDetails = {
             id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
             title: removeSpecialChars(courseTitle.value),
-            code: removeSpecialChars(courseCode.value),
+            code: validateInput(courseCode.value),
             unit: courseUnit.value,
             grade: courseGrade.value, 
         };
-        //add or edit course
-        if (courseDataArrIndex === -1) {
-            //add course
-            currentSessionCourseData.unshift(courseDetails);
+        //add course
+        if (courseIndex === -1) {
+            currentSessionCourses.unshift(courseDetails);
         } else {
-            //update existing/edited course
-            currentSessionCourseData[courseDataArrIndex] = courseDetails;
+            //update course
+            currentSessionCourses[courseIndex] = courseDetails;
         }
-        currentSessionDetails.sessionCourseData = currentSessionCourseData;
+        currentSessionDetails.sessionCourseData = currentSessionCourses;
     } else{
-
         //if session doesn't exist
         const newSessionDetails = {};
         newSessionDetails.session = sessionValue;
@@ -103,7 +112,6 @@ const addOrUpdateCourseDetails = () => {
         entireData.unshift(newSessionDetails);
     }
     localStorage.setItem('data', JSON.stringify(entireData));
-    console.log(entireData);
     updateDashboard(sessionValue);
     reset();
 };
@@ -113,14 +121,14 @@ const updateDashboard = (str) => {
     dashboard.classList.remove("hidden");
     const sessionIndex = entireData.findIndex((item) => item.session === str);
     currentSessionDetails = entireData[sessionIndex];
-    const display = currentSessionDetails.sessionCourseData;
+    currentSessionCourses = currentSessionDetails.sessionCourseData;
     let courseIndex = 0;
         
     courseTable.innerHTML = "";
-    display.forEach(({ id, title, code, unit, grade }) => {
+    currentSessionCourses.forEach(({ id, title, code, unit, grade }) => {
         courseIndex += 1;
         courseTable.innerHTML += `
-        <tr>
+        <tr id="${id}">
             <td>${courseIndex}</td>
             <td>${code}</td>
             <td>${title}</td>
@@ -128,8 +136,8 @@ const updateDashboard = (str) => {
             <td>${grade}</td>
             <td>${grade}</td>
             <td class="edit-delete">
-                <button class="btn small-btn">Edit</button>
-                <button onclick="deleteTask(this)" class="close-course-form-btn" type="button" aria-label="close">
+                <button onclick="editCourse(this)" class="btn small-btn">Edit</button>
+                <button onclick="deleteCourse(this)" class="close-course-form-btn" type="button" aria-label="close">
                     <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#F44336" d="M21.5 4.5H26.501V43.5H21.5z" transform="rotate(45.001 24 24)" /><path fill="#F44336" d="M21.5 4.5H26.5V43.501H21.5z" transform="rotate(135.008 24 24)" /></svg>
                 </button>
             </td>
@@ -138,7 +146,7 @@ const updateDashboard = (str) => {
     });
     
     addBtn.innerHTML = `
-    <button class="btn blue-btn" onclick="addCourse()">Add course</button>
+    <button class="btn blue-btn" onclick="openCourseForm()">Add course</button>
     `
 };
 
@@ -148,124 +156,98 @@ const reset = () => {
     courseCode.value = "" ;
     courseUnit.value = "";
     courseGrade.value = "";
+    addUpdateBtn.innerText = "Add Course";
     courseFormBox.close();
-    openFormBox.classList.add("hidden");
-    currentTask = {};
-    sessionYear.value = ""
+    currentSessionCourses = [];
+    currentSessionDetails = {};
+    currentCourse = {};
+    
 };
-/*
-//to delete task
-const deleteTask = (buttonEl) => {
+
+//to delete course
+const deleteCourse = (buttonEl) => {
+    const sessionValue = sessionYear.value;
     const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
-    const dataArrIndex = courseData.findIndex((item) => item.id === buttonEl.parentElement.id);
+    currentSessionDetails = entireData[sessionIndex];
+    currentSessionCourses = currentSessionDetails.sessionCourseData;
+
+    const courseIndex = currentSessionCourses.findIndex((item) => item.id === buttonEl.parentElement.parentElement.id);
     buttonEl.parentElement.parentElement.remove();
-    courseData.splice(dataArrIndex, 1);
-    localStorage.setItem('data', JSON.stringify(entireData));
-    updateDashboard();
+    currentSessionCourses.splice(courseIndex, 1);
+
+    updateDashboard(sessionValue);
+    if (currentSessionCourses.length === 0) {
+        entireData.splice(sessionIndex, 1);
+        addBtn.innerHTML = "";
+        dashboard.classList.add("hidden");
+        openFormBox.classList.remove("hidden");
+    }
+
+    localStorage.setItem('data', JSON.stringify(entireData));  
 };
-*/
-/*
-const editTask = (buttonEl) => {
-    const dataArrIndex = taskData.findIndex(item => item.id === buttonEl.parentElement.id);
 
-    currentTask = taskData[dataArrIndex];
+//Edit a course details
+const editCourse = (buttonEl) => {
+    const sessionValue = sessionYear.value;
+    const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
+    currentSessionDetails = entireData[sessionIndex];
+    currentSessionCourses = currentSessionDetails.sessionCourseData;
 
-    titleInput.value = currentTask.title;
-    dateInput.value = currentTask.date;
-    descriptionInput.value = currentTask.description;
+    const courseIndex = currentSessionCourses.findIndex((item) => item.id === buttonEl.parentElement.parentElement.id);
+    currentCourse = currentSessionCourses[courseIndex];
+    
+    courseTitle.value = currentCourse.title;
+    courseCode.value = currentCourse.code;
+    courseUnit.value = currentCourse.unit;
+    courseGrade.value = currentCourse.grade;
 
-    addOrUpdateTaskBtn.innerText = "Update Task";
-    taskForm.classList.toggle("hidden");
+    addUpdateBtn.innerText = "Update Course";
+    courseFormBox.showModal();
 };
-*/
 
-//input course details to form
-const addCourse = () => {
+const openCourseForm = () => {
     openFormBox.classList.add("hidden");
-    //console.log(entireData);
     courseFormBox.showModal();
 }
 
-const submitForm = (e) => {
+const submitCourseForm = (e) => {
     e.preventDefault();
-    //add or Edit the course details
     addOrUpdateCourseDetails();
 }
 
-//input initial course detail to form
-openFormBtn.addEventListener("click", addCourse)
+openFormBtn.addEventListener("click", openCourseForm)
 
-//close form
-closeFormBtn.addEventListener("click", reset)
+closeFormBtn.addEventListener("click", () => {
+    const sessionValue = sessionYear.value;
+    const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
+    //if session doesn't exist
+    if (sessionIndex === -1) {
+        reset();
+        openFormBox.classList.remove("hidden");
+    } else{
+       reset();
+    }
+})
 
-//submit form to add to/update the dashboard
-courseForm.addEventListener("submit", submitForm)
+courseForm.addEventListener("submit", submitCourseForm)
 
+//Change session value
 sessionYear.addEventListener('change', () => {
     const sessionValue = sessionYear.value;
-    const dataArrIndex = entireData.findIndex((item) => item.session === sessionValue);
-    console.log(entireData);
-    console.log(dataArrIndex);
-    if (dataArrIndex === -1) {
+    const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
+    //if session doesnt exist
+    if (sessionIndex === -1) {
+        addBtn.innerHTML = ""
         dashboard.classList.add("hidden");
         openFormBox.classList.remove("hidden");
     } else{
-        console.log('Dashboard exist');
         openFormBox.classList.add("hidden");
-        //updateDashboard(sessionYear.value);
+        updateDashboard(sessionValue);
         dashboard.classList.remove("hidden");
-        addBtn.innerHTML = `
-        <button class="btn blue-btn" onclick="addCourse()">Add course</button>
-        `
     }
-
 });
-/*
-const id = () => {
-    switch (sessionYear.value) {
-        case '2024/2025':
-            return 1;
-        case '2023/2024':
-            return 2;
-        case '2022/2023':
-            return 3;
-        case '2021/2022':
-            return 4;
-        case '2020/2021':
-            return 5;
-        case '2019/2020':
-            return 6;
-        case '2018/2019':
-            return 7;
-        case '2017/2018':
-            return 8;
-        default:
-            return 9;
-    }
-}
 
-//check if the session dashboard exist
-const checkDashboard = () => {
-    const dataArrIndex = entireData.findIndex((item) => item.session === sessionYear.value );
-    if (dataArrIndex === -1) {
-        dashboard.classList.add("hidden");
-        openFormBox.classList.remove("hidden");
-    } else{
-        openFormBox.classList.add("hidden");
-        //updateDashboard(sessionYear.value);
-        dashboard.classList.remove("hidden");
-        addBtn.innerHTML = `
-        <button class="btn blue-btn" onclick="addCourse()">Add course</button>
-        `
-    }
-}
-*/
-    
-    
-
-
-//localStorage.clear();
-
+//NOTES
 /**
  * click on a session;
  * check if the session clicked on exist already with course details or not
