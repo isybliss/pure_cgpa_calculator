@@ -204,6 +204,11 @@ dialog{
     justify-content: space-around;
 }
 
+.course-code-label{
+    margin-top: 10px;
+}
+
+#course-title,
 #course-code {
     margin-bottom: 2px;
 }

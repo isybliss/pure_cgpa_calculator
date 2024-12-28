@@ -128,6 +128,11 @@
                         </div>
                     </div>
 
+                    <div class="Result">
+                        <p><strong >GP:</strong> <span id="gp"></span></p>
+                    </div>
+
+                    <!--
                     <div class="semester-container">
                         <label class="semester-label" for="semester-year">semester</label>
                         <div class="dropdown-container">
@@ -152,6 +157,7 @@
                             </div>
                         </div>
                     </div>
+                    -->
                 </div>
                 <div class="add-course-btn" id="add-course-btn"></div>
             </div>
@@ -177,7 +183,7 @@
                             <label for="course-title">Course title</label>
                             <input required type="text" id="course-title" value="" />
                             <span id="errorMessage1" style="color: red; display: none; font-size: 12px;">Invalid course title.</span>
-                            <label for="course-code">Course code</label>
+                            <label for="course-code" class="course-code-label">Course code</label>
                             <input required type="text" id="course-code" value="" />
                             <span id="errorMessage2" style="color: red; display: none; font-size: 12px;">Invalid course Code format. It should be 3 letters followed by 3 numbers (eg: MTH100)</span>
                             <div class="course-unit-grade">

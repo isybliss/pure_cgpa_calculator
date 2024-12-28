@@ -30,6 +30,7 @@ const courseGrade = document.getElementById("course-grade");
 const dashboard = document.getElementById("course-dashboard");
 const addBtn = document.getElementById("add-course-btn");
 const courseTable = document.getElementById("course-table");
+const gp = document.getElementById("gp");
 
 
 
@@ -56,28 +57,45 @@ const remarkGrade = (str) => {
     }
 }
 
+const gradeNum = (str) => {
+    if (str === "A") {
+        return 5;
+    } else if (str === "B") {
+        return 4;
+    } else if (str === "C") {
+        return  3;
+    } else if (str === "D") {
+        return 2;
+    } else if (str === "E") {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 //remove special characters and leave spaces
 const removeSpecialChars = (str) => {
     const regex = /[^a-z\s]/gi;
     return str.replace(regex, "");
 }
 
-/*
-//validate Course code to be 3 initial letters followed by 3 numbers
-const validateInput = (str) => {
-    const regex = /^[a-zA-Z]{3}[0-9]{3}$/;
-    if (!regex.test(str)) {
-        errorMessage2.style.display = "block";
-        return;
-        //reset();
-        //addOrUpdateCourseDetails();
-        //courseForm.showModal();    
-    } else {
-        errorMessage2.style.display = "none";
-        //return str.toUpperCase();
-    }
+const calcGp = (str) => {
+    const sessionIndex = entireData.findIndex((item) => item.session === str);
+    currentSessionDetails = entireData[sessionIndex];
+    currentSessionCourses = currentSessionDetails.sessionCourseData;
+    let totalUnit = 0;
+    let totalGradeUnit = 0;
+    currentSessionCourses.forEach(({ unit, grade }) => {
+        const gradeNumber = gradeNum(grade);
+        const gradeUnit = gradeNumber * unit;
+        totalUnit += Number(unit);
+        totalGradeUnit += gradeUnit;
+    })
+    //console.log(totalGradeUnit);
+    //console.log(totalUnit);
+    const Gp = parseFloat((totalGradeUnit / totalUnit).toFixed(3));
+    return Gp;
 }
-*/
 
 /**
  * check if session exist
@@ -86,7 +104,7 @@ const validateInput = (str) => {
  * if session doesn't exist: 
  *  add the new sessionValue and  new course details to the newSessionDetails objects.
 */
-const addOrUpdateCourseDetails = (e) => {
+const addOrUpdateCourseDetails = () => {
     //if space is inputed instead of letters ie does not return a value after the spaces are trimmed out
     if (!courseTitle.value.trim()) {
         //alert("Input valid course title");
@@ -140,8 +158,8 @@ const addOrUpdateCourseDetails = (e) => {
         const newSessionCourseData = [];
         const courseDetails = {
             id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
-            title: removeSpecialChars(courseTitle.value),
-            code:  validateInput(courseCode.value),
+            title: removeSpecialChars(courseTitle.value[0].toUpperCase() + courseTitle.value.substring(1)),
+            code: courseCode.value.toUpperCase(),
             unit: courseUnit.value,
             grade: courseGrade.value,
             remark : remarkGrade(courseGrade.value),
@@ -183,7 +201,7 @@ const updateDashboard = (str) => {
         </tr>
         `;
     });
-    
+    gp.innerHTML = `${calcGp(sessionYear.value)}`,
     addBtn.innerHTML = `
     <button class="btn blue-btn" onclick="openCourseForm()">Add course</button>
     `
