@@ -15,6 +15,8 @@ const openFormBtn = document.getElementById("open-form-btn");
 const closeFormBtn = document.getElementById("close-form-btn");
 const courseFormBox = document.getElementById("course-form-container");
 const courseForm = document.getElementById("course-form");
+const errorMessage1 = document.getElementById("errorMessage1");
+const errorMessage2 = document.getElementById("errorMessage2");
 const addUpdateBtn = document.getElementById("add-or-update-course-btn");
 
 //Inputs
@@ -34,24 +36,48 @@ const courseTable = document.getElementById("course-table");
 //array of each session's object
 const entireData = JSON.parse(localStorage.getItem("data")) || [];
 let currentSessionDetails = {}; //object of session and its courses
-
 let currentSessionCourses = [];
 let currentCourse = {};
 
+//return remark based on grade
+const remarkGrade = (str) => {
+    if (str === "A") {
+        return "Excellent";
+    } else if (str === "B") {
+        return "Very Good";
+    } else if (str === "C") {
+        return "Good";
+    } else if (str === "D") {
+        return "Pass";
+    } else if (str === "E") {
+        return "Pass";
+    } else {
+        return "Fail"
+    }
+}
+
 //remove special characters and leave spaces
 const removeSpecialChars = (str) => {
-    const regex = /[^a-z0-9\s]/gi;
+    const regex = /[^a-z\s]/gi;
     return str.replace(regex, "");
 }
 
+/*
+//validate Course code to be 3 initial letters followed by 3 numbers
 const validateInput = (str) => {
     const regex = /^[a-zA-Z]{3}[0-9]{3}$/;
-    if (regex.test(str)) {
-        return str.toUpperCase();
+    if (!regex.test(str)) {
+        errorMessage2.style.display = "block";
+        return;
+        //reset();
+        //addOrUpdateCourseDetails();
+        //courseForm.showModal();    
     } else {
-        return str = "";
+        errorMessage2.style.display = "none";
+        //return str.toUpperCase();
     }
 }
+*/
 
 /**
  * check if session exist
@@ -60,19 +86,29 @@ const validateInput = (str) => {
  * if session doesn't exist: 
  *  add the new sessionValue and  new course details to the newSessionDetails objects.
 */
-
-const addOrUpdateCourseDetails = () => {
+const addOrUpdateCourseDetails = (e) => {
     //if space is inputed instead of letters ie does not return a value after the spaces are trimmed out
     if (!courseTitle.value.trim()) {
-        alert("Input valid details");
+        //alert("Input valid course title");
+        errorMessage1.style.display = "block";
         return;
+    } else {
+        errorMessage1.style.display = "none";
     }
-
+    
+    //Valdate courseCode
+    const regex = /^[a-zA-Z]{3}[0-9]{3}$/;
+    if (!regex.test(courseCode.value.trim())) {
+        errorMessage2.style.display = "block";
+        return;   
+    } else {
+        errorMessage2.style.display = "none";
+    }
+    
     const sessionValue = sessionYear.value;
     
     //check if session exist
     const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
-    
     if (sessionIndex !== -1) {
         currentSessionDetails = entireData[sessionIndex];
         currentSessionDetails.session = sessionValue;
@@ -82,17 +118,19 @@ const addOrUpdateCourseDetails = () => {
         const courseIndex = currentSessionCourses.findIndex(item => item.id === currentCourse.id);
         const courseDetails = {
             id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
-            title: removeSpecialChars(courseTitle.value),
-            code: validateInput(courseCode.value),
+            title: removeSpecialChars(courseTitle.value[0].toUpperCase() + courseTitle.value.substring(1)),
+            code: courseCode.value.toUpperCase(),
             unit: courseUnit.value,
-            grade: courseGrade.value, 
+            grade: courseGrade.value,
+            remark : remarkGrade(courseGrade.value)
         };
+
         //add course
         if (courseIndex === -1) {
             currentSessionCourses.unshift(courseDetails);
         } else {
             //update course
-            currentSessionCourses[courseIndex] = courseDetails;
+            currentSessionCourses[courseIndex] = courseDetails;   
         }
         currentSessionDetails.sessionCourseData = currentSessionCourses;
     } else{
@@ -103,9 +141,10 @@ const addOrUpdateCourseDetails = () => {
         const courseDetails = {
             id: `${removeSpecialChars(courseTitle.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
             title: removeSpecialChars(courseTitle.value),
-            code: removeSpecialChars(courseCode.value),
+            code:  validateInput(courseCode.value),
             unit: courseUnit.value,
-            grade: courseGrade.value, 
+            grade: courseGrade.value,
+            remark : remarkGrade(courseGrade.value),
         };
         newSessionCourseData.push(courseDetails);
         newSessionDetails.sessionCourseData = newSessionCourseData;
@@ -125,7 +164,7 @@ const updateDashboard = (str) => {
     let courseIndex = 0;
         
     courseTable.innerHTML = "";
-    currentSessionCourses.forEach(({ id, title, code, unit, grade }) => {
+    currentSessionCourses.forEach(({ id, title, code, unit, grade, remark }) => {
         courseIndex += 1;
         courseTable.innerHTML += `
         <tr id="${id}">
@@ -134,7 +173,7 @@ const updateDashboard = (str) => {
             <td>${title}</td>
             <td>${unit}</td>
             <td>${grade}</td>
-            <td>${grade}</td>
+            <td>${remark}</td>
             <td class="edit-delete">
                 <button onclick="editCourse(this)" class="btn small-btn">Edit</button>
                 <button onclick="deleteCourse(this)" class="close-course-form-btn" type="button" aria-label="close">
@@ -234,6 +273,7 @@ courseForm.addEventListener("submit", submitCourseForm)
 //Change session value
 sessionYear.addEventListener('change', () => {
     const sessionValue = sessionYear.value;
+    console.log(entireData);
     const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
     //if session doesnt exist
     if (sessionIndex === -1) {

@@ -203,9 +203,19 @@ dialog{
     flex-direction: column;
     justify-content: space-around;
 }
-.course-code-unit{
+
+#course-code {
+    margin-bottom: 2px;
+}
+.course-unit-grade{
+    margin-top: 10px;
     display: flex;
     justify-content: space-between;
+    gap: 10px;
+}
+
+.course-unit-grade div{
+ width: 50%;
 }
 .todo-app label,
 .todo-app input,
@@ -273,4 +283,17 @@ tbody tr:nth-child(odd) .edit-delete{
     font-size: 11px;
     width: unset;
     padding: .2rem .4rem;
+}
+
+@media (max-width: 600px) {
+    body{
+        font-size: 80%;
+    }
+    .dropdown-container{
+        width: 70%;
+        font-size: 80%;
+    }
+    .dropdown-container select {  
+        font-size: 100%;    
+    }
 }

@@ -176,14 +176,14 @@
                         <div class="course-form-body">
                             <label for="course-title">Course title</label>
                             <input required type="text" id="course-title" value="" />
-                            <div class="course-code-unit">
-                                <div class="code">
-                                    <label for="course-code">Course code</label>
-                                    <input type="text" id="course-code" value="" minlength="6" maxlength="6" required/>
-                                </div>
+                            <span id="errorMessage1" style="color: red; display: none; font-size: 12px;">Invalid course title.</span>
+                            <label for="course-code">Course code</label>
+                            <input required type="text" id="course-code" value="" />
+                            <span id="errorMessage2" style="color: red; display: none; font-size: 12px;">Invalid course Code format. It should be 3 letters followed by 3 numbers (eg: MTH100)</span>
+                            <div class="course-unit-grade">
                                 <div class="unit">
                                     <label for="course-unit">Course unit</label>
-                                    <select name="course-unit" id="course-unit">
+                                    <select required name="course-unit" id="course-unit">
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -196,16 +196,20 @@
                                         <option value="10">10</option>
                                     </select>
                                 </div>
+
+                                <div class="grade">
+                                    <label for="course-grade">Course grade</label>
+                                    <select required name="course-grade" id="course-grade">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
                             </div>
-                            <label for="course-grade">Course grade</label>
-                            <select name="course-grade" id="course-grade">
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
-                                <option value="E">E</option>
-                                <option value="F">F</option>
-                            </select>
+                            
                         </div>
                         <div class="course-form-footer">
                             <button id="add-or-update-course-btn" class="btn blue-btn" type="submit">
@@ -218,12 +222,12 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>S/N</th>
-                                <th>Course code</th>
-                                <th>Course title</th>
-                                <th>Course unit</th>
-                                <th>Grade</th>
-                                <th>Remark</th>
+                                <th style="width: 5%;">S/N</th>
+                                <th style="width: 20%;">Code</th>
+                                <th style="width: 35%;">Course Title</th>
+                                <th style="width: 10%;">Unit</th>
+                                <th style="width: 10%;">Grade</th>
+                                <th style="width: 20%;">Remark</th>
                                 <th style="width: 80px;"></th>
                             </tr>
                         </thead>
