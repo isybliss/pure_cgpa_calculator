@@ -31,6 +31,7 @@ const dashboard = document.getElementById("course-dashboard");
 const addBtn = document.getElementById("add-course-btn");
 const courseTable = document.getElementById("course-table");
 const gp = document.getElementById("gp");
+const cgp = document.getElementById("cgp");
 
 
 
@@ -79,6 +80,29 @@ const removeSpecialChars = (str) => {
     return str.replace(regex, "");
 }
 
+const calcCgp = () => {
+    if (entireData.length === 4) {
+        const firstYear = entireData[0].gp * 0.1;
+        const secondYear = entireData[1].gp * 0.2;
+        const thirdYear = entireData[2].gp * 0.3;
+        const fourthYear = entireData[3].gp * 0.4;
+        const totalCGP = parseFloat(firstYear + secondYear + thirdYear + fourthYear).toFixed(3);
+        return totalCGP;
+
+    } else if (entireData.length === 5) {
+        const firstYear = entireData[0].gp * 0.05;
+        const secondYear = entireData[1].gp * 0.10;
+        const thirdYear = entireData[2].gp * 0.15;
+        const fourthYear = entireData[3].gp * 0.30;
+        const fifthYear = entireData[4].gp * 0.40;
+        const totalCGP = parseFloat(firstYear + secondYear + thirdYear + fourthYear + fifthYear).toFixed(3);
+        return totalCGP;
+
+    } else {
+        return "";
+    }
+}
+
 const calcGp = (str) => {
     const sessionIndex = entireData.findIndex((item) => item.session === str);
     currentSessionDetails = entireData[sessionIndex];
@@ -93,8 +117,9 @@ const calcGp = (str) => {
     })
     //console.log(totalGradeUnit);
     //console.log(totalUnit);
-    const Gp = parseFloat((totalGradeUnit / totalUnit).toFixed(3));
-    return Gp;
+    const gp = parseFloat((totalGradeUnit / totalUnit).toFixed(3));
+    currentSessionDetails.gp = gp;
+    return gp;
 }
 
 /**
@@ -166,7 +191,7 @@ const addOrUpdateCourseDetails = () => {
         };
         newSessionCourseData.push(courseDetails);
         newSessionDetails.sessionCourseData = newSessionCourseData;
-        entireData.unshift(newSessionDetails);
+        entireData.push(newSessionDetails);
     }
     localStorage.setItem('data', JSON.stringify(entireData));
     updateDashboard(sessionValue);
@@ -202,6 +227,7 @@ const updateDashboard = (str) => {
         `;
     });
     gp.innerHTML = `${calcGp(sessionYear.value)}`,
+    cgp.innerHTML = `${calcCgp()}`,
     addBtn.innerHTML = `
     <button class="btn blue-btn" onclick="openCourseForm()">Add course</button>
     `
@@ -217,8 +243,7 @@ const reset = () => {
     courseFormBox.close();
     currentSessionCourses = [];
     currentSessionDetails = {};
-    currentCourse = {};
-    
+    currentCourse = {};    
 };
 
 //to delete course
@@ -291,10 +316,12 @@ courseForm.addEventListener("submit", submitCourseForm)
 //Change session value
 sessionYear.addEventListener('change', () => {
     const sessionValue = sessionYear.value;
-    console.log(entireData);
+    //console.log(entireData);
     const sessionIndex = entireData.findIndex((item) => item.session === sessionValue);
     //if session doesnt exist
     if (sessionIndex === -1) {
+        gp.innerHTML = "";
+        cgp.innerHTML = "";
         addBtn.innerHTML = ""
         dashboard.classList.add("hidden");
         openFormBox.classList.remove("hidden");
