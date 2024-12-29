@@ -106,6 +106,10 @@ const calcCgp = () => {
 const calcGp = (str) => {
     const sessionIndex = entireData.findIndex((item) => item.session === str);
     currentSessionDetails = entireData[sessionIndex];
+    /**
+     * to use filter()
+     * currentSessionDetails = entireData.filter((item) => item.session === str)
+     */
     currentSessionCourses = currentSessionDetails.sessionCourseData;
     let totalUnit = 0;
     let totalGradeUnit = 0;
@@ -115,8 +119,7 @@ const calcGp = (str) => {
         totalUnit += Number(unit);
         totalGradeUnit += gradeUnit;
     })
-    //console.log(totalGradeUnit);
-    //console.log(totalUnit);
+    
     const gp = parseFloat((totalGradeUnit / totalUnit).toFixed(3));
     currentSessionDetails.gp = gp;
     return gp;
@@ -203,6 +206,10 @@ const updateDashboard = (str) => {
     dashboard.classList.remove("hidden");
     const sessionIndex = entireData.findIndex((item) => item.session === str);
     currentSessionDetails = entireData[sessionIndex];
+    /**
+     * to use filter() / find()
+     * currentSessionDetails = entireData.filter/find((item) => item.session === str)
+     */
     currentSessionCourses = currentSessionDetails.sessionCourseData;
     let courseIndex = 0;
         
